@@ -307,7 +307,7 @@ def preprocess_function(
     # Inline question 4.1:
     # What does the loop below do? Why dos target_tokenizer has max_length=max_seq_length-1?
     # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-    #
+    # Combining the utility with batch mode is very powerful. It allows you to speed up processing, and freely control the size of the generated dataset.
     # END OF YOUR ANSWER
     decoder_input_ids = []
     labels = []
@@ -318,7 +318,7 @@ def preprocess_function(
     # Inline question 4.2:
     # Why do we need to shift the target text by one token?
     # YOUR ANSWER HERE (please limit your answer to one sentence):
-    #
+    # containing a list of lists of input_ids of tokenized texts
     # END OF YOUR ANSWER
     model_inputs["decoder_input_ids"] = decoder_input_ids
     model_inputs["labels"] = labels
@@ -370,7 +370,7 @@ def evaluate_model(
             # What is the diffrence between model.forward() and model.generate()?
             # Do we need to have decoder_input_ids in the .forward() call? In .generate() call?
             # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-            #
+            # yes to turn calls the shift_tokens_right() function to make the decoder input.
             generated_tokens = model.generate(
                 input_ids,
                 bos_token_id=target_tokenizer.bos_token_id,
@@ -454,6 +454,7 @@ def main():
         tgt_vocab_size=target_tokenizer.vocab_size,
         max_seq_len=args.max_seq_length,
         dropout=args.dropout_rate)
+    model.to(args.device)
     # YOUR CODE ENDS HERE
 
     ###############################################################################
