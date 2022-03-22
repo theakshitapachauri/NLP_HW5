@@ -283,10 +283,10 @@ class TransfomerEncoderDecoderModel(nn.Module):
         # 3. Pass source embeddings through the encoder layers, name them encoder_hidden_states
         # 3a. Remember to use key_padding_mask to mask out padding tokens
         # YOUR CODE STARTS HERE
-        encod_emb = self.encoder_embeddings(input_ids)
-        encoder_hidden_states = self._add_positions(encod_emb)
+        source_emb = self.encoder_embeddings(input_ids)
+        source_emb = self._add_positions(source_emb)
         for layer in self.encoder_layers:
-            encoder_hidden_states = layer(encoder_hidden_states, key_padding_mask=key_padding_mask)
+            encoder_hidden_states = layer(source_emb, key_padding_mask=key_padding_mask)
 
         # YOUR CODE ENDS HERE
 
@@ -301,10 +301,10 @@ class TransfomerEncoderDecoderModel(nn.Module):
         # 3a. Remember to use key_padding_mask to mask out padding tokens for the encoder inputs
         # 4. use self.out_proj to get output logits, a.k.a log-probabilies of the next translation tokens
         # YOUR CODE STARTS HERE
-        decod_emb = self.decoder_embeddings(decoder_input_ids)
-        decoder_hidden_states = self._add_positions(decod_emb)
+        decode_emb = self.decoder_embeddings(decoder_input_ids)
+        decode_emb = self._add_positions(decode_emb)
         for layer in self.decoder_layers:
-            encoder_hidden_states = layer(decoder_hidden_states, encoder_hidden_states,
+            decoder_hidden_states = layer(decode_emb, encoder_hidden_states,
                                           key_padding_mask=key_padding_mask)
 
         logits = self.out_proj(decoder_hidden_states)

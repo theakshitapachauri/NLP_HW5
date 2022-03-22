@@ -64,8 +64,8 @@ class MultiHeadAttention(nn.Module):
         # Note : Please write shape of each tensor for each line of code
         ## YOUR CODE STARTS HERE## ~ 2 lines code
         if kv is None: kv = q
-        k, q, v = self.k(kv), self.q(q), self.v(
-            kv)  # k-> [batch_size, kv_seq_len, input_size] , q->[batch_size, query_seq_len, input_size]
+        k, q, v = self.k(kv), self.q(q), self.v(kv)
+        # k-> [batch_size, kv_seq_len, input_size] , q->[batch_size, query_seq_len, input_size]
         # v-> [batch_size, kv_seq_len, input_size]
 
         # YOUR CODE ENDS HERE
@@ -91,7 +91,7 @@ class MultiHeadAttention(nn.Module):
             # Our implementation is 3 lines
             # YOUR CODE STARTS HERE
             scores = scores.view(bs, self.num_heads, attending_seq, attended_seq)
-            scores = scores.masked_fill(key_padding_mask.bool().unsqueeze(1).unsqueeze(2), float("-inf"))
+            scores = scores.masked_fill_(key_padding_mask.bool().unsqueeze(1).unsqueeze(2), float("-inf"))
             scores = scores.view(bs * self.num_heads, attending_seq, attended_seq)
             # YOUR CODE ENDS HERE
 
