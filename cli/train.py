@@ -307,7 +307,8 @@ def preprocess_function(
     # Inline question 4.1:
     # What does the loop below do? Why dos target_tokenizer has max_length=max_seq_length-1?
     # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-    # Combining the utility with batch mode is very powerful. It allows you to speed up processing, and freely control the size of the generated dataset.
+    # In teacher-forcing style, the target sequence is appended by the EOS token and corresponds to the labels, hence the max_length = max_seq_length-1 (minus the EOS token)
+    # target_tokenizer has max_length = max_seq_length-1 because
     # END OF YOUR ANSWER
     decoder_input_ids = []
     labels = []
@@ -318,7 +319,7 @@ def preprocess_function(
     # Inline question 4.2:
     # Why do we need to shift the target text by one token?
     # YOUR ANSWER HERE (please limit your answer to one sentence):
-    # containing a list of lists of input_ids of tokenized texts
+    # We shift the target text by one token so that our model do not learn to “copy” the decoder input instead should predict the target word/character for position i having seen the word/characters 1, …, i-1 in the decoder sequence.
     # END OF YOUR ANSWER
     model_inputs["decoder_input_ids"] = decoder_input_ids
     model_inputs["labels"] = labels
@@ -370,7 +371,10 @@ def evaluate_model(
             # What is the diffrence between model.forward() and model.generate()?
             # Do we need to have decoder_input_ids in the .forward() call? In .generate() call?
             # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-            # yes to turn calls the shift_tokens_right() function to make the decoder input.
+            # In model.forward(), the inputs to the decoder are the labels shifted by one i.e with teacher-forcing the decoder always gets the ground-truth token in the next step, no matter what the prediction was.
+            # In model.generate(), the model is used in the autoregressive fashion. Any token it generates is put as the input in the next step.
+            # Most encoder-decoder models (BART, T5) create their decoder_input_ids on their own from the labels.
+            # In such models, passing the labels is the preferred way to handle training.
             generated_tokens = model.generate(
                 input_ids,
                 bos_token_id=target_tokenizer.bos_token_id,
@@ -529,7 +533,8 @@ def main():
         shuffle=False,
         collate_fn=collation_function_for_seq2seq_wrapped,
         batch_size=args.batch_size
-    ) # YOUR CODE ENDS HERE
+    )
+    # YOUR CODE ENDS HERE
 
     ###############################################################################
     # Part 5: Create optimizer and scheduler

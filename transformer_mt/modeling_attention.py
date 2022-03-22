@@ -91,9 +91,8 @@ class MultiHeadAttention(nn.Module):
             # Our implementation is 3 lines
             # YOUR CODE STARTS HERE
             scores = scores.view(bs, self.num_heads, attending_seq, attended_seq)
-            scores.masked_fill_(key_padding_mask.bool().unsqueeze(1).unsqueeze(2), float("-inf"))
+            scores = scores.masked_fill_(key_padding_mask.bool().unsqueeze(1).unsqueeze(2), float("-inf"))
             scores = scores.view(bs * self.num_heads, attending_seq, attended_seq)
-
             # YOUR CODE ENDS HERE
 
         assert scores.size() == (bs * self.num_heads, attending_seq, attended_seq),\
