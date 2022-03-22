@@ -86,12 +86,12 @@ class TransformerDecoderLayer(nn.Module):
             input_size=hidden,
             hidden=hidden,
             num_heads=num_heads,
+            causal=True,
         )
         self.cross_attention = MultiHeadAttention(
             input_size=hidden,
             hidden=hidden,
             num_heads=num_heads,
-            causal=True,
         )
 
         self.self_att_layer_norm = nn.LayerNorm(hidden)
