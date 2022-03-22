@@ -134,7 +134,7 @@ class TransformerDecoderLayer(nn.Module):
         # Note : Please write shape of the tensor for each line of code
         # YOUR CODE STARTS HERE (our implementation is about 10 lines)
         residual = decoder_hidden_states
-        x = self.self_attention(decoder_hidden_states, key_padding_mask=key_padding_mask)
+        x = self.self_attention(decoder_hidden_states)
         x = self.self_att_layer_norm(x + residual)
         residual = x
         x = self.cross_attention(residual, encoder_hidden_states, key_padding_mask=key_padding_mask)
