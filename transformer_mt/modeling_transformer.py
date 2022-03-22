@@ -304,7 +304,7 @@ class TransfomerEncoderDecoderModel(nn.Module):
         decode_emb = self.decoder_embeddings(decoder_input_ids)
         decode_emb = self._add_positions(decode_emb)
         for layer in self.decoder_layers:
-            decoder_hidden_states = layer(decode_emb, encoder_hidden_states,
+            decoder_hidden_states = layer(decode_emb, encoder_hidden_states=encoder_hidden_states,
                                           key_padding_mask=key_padding_mask)
 
         logits = self.out_proj(decoder_hidden_states)
