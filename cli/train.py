@@ -307,8 +307,10 @@ def preprocess_function(
     # Inline question 4.1:
     # What does the loop below do? Why dos target_tokenizer has max_length=max_seq_length-1?
     # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-    # In teacher-forcing style, the target sequence is appended by the EOS token and corresponds to the labels, hence the max_length = max_seq_length-1 (minus the EOS token)
-    # target_tokenizer has max_length = max_seq_length-1 because
+    # the loop below is shifting decoder inputs to the left from the target values,creating the list of decoder_input_ids with BOS tokens in first position and the list of labels
+    # The first position of the decoder input is filled with a start-of-sentence token, since that place would otherwise be empty because of the right-shift.
+    # Similarly, we append an end-of-sentence token to the decoder input sequence to mark the end of that sequence and it is also appended to the target output sentence.
+    # target_tokenizer has max_length = max_seq_length-1 to truncate them to the maximum length we want our model to work with.
     # END OF YOUR ANSWER
     decoder_input_ids = []
     labels = []
@@ -373,8 +375,9 @@ def evaluate_model(
             # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
             # In model.forward(), the inputs to the decoder are the labels shifted by one i.e with teacher-forcing the decoder always gets the ground-truth token in the next step, no matter what the prediction was.
             # In model.generate(), the model is used in the autoregressive fashion. Any token it generates is put as the input in the next step.
-            # Most encoder-decoder models (BART, T5) create their decoder_input_ids on their own from the labels.
-            # In such models, passing the labels is the preferred way to handle training.
+            # Most encoder-decoder models (BART, T5) create their decoder_input_ids on their own from the labels. In such models, passing the labels is the preferred way to handle training.
+            # If we want to have more control and want to do one model.forward() pass, we should define both input_ids and decoder_input_ids
+            # but if we want to generate from a pretrained model, we do not need to have decoder_input_ids in .generate() call.
             generated_tokens = model.generate(
                 input_ids,
                 bos_token_id=target_tokenizer.bos_token_id,

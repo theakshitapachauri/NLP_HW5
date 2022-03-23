@@ -1,0 +1,1 @@
+{"num_layers": 6, "hidden": 512, "num_heads": 8, "fcn_hidden": 2048, "src_vocab_size": 32000, "tgt_vocab_size": 32000, "max_seq_len": 128, "dropout": 0.1}
